@@ -1,0 +1,92 @@
+# This is the configuration file for the package tmux
+# Tmux is the short abbreviation of 'Terminal Multiplexer'
+
+# This file was created by
+# Author: Prof Jaime Ibarra
+# Version 1.0
+# OS: Debian
+# Date April 24th 2024
+
+# Description
+# The main objective is to create a configuration file that works efficiently
+# but also is a decent tmux conf file rice
+
+# Step 1 - Some key rebinding
+
+# Rebinding awkward prefix keys from 'C-b' to 'C-s'
+unbind C-b
+set-option -g prefix C-Space
+bind-key C-Space send-prefix
+
+# Getting some reasonable Split Commands
+unbind '"'
+unbind %
+bind | split-window -h -c "#{pane_current_path}"
+bind "\\" split-window -fh -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind "_" split-window -fv -c "#{pane_current_path}"
+
+# Reload Configuration
+bind r source-file ~/.tmux.conf \; display "Configuration succesfully Reloaded!"
+
+# Stop renaming windows in an automatic mod
+set-option -g allow-rename off
+
+# Enable mouse control (clickable windows, panes, resizable panes)
+set -g mouse on
+
+# Increasing the history size
+set-option -g history-limit 5000
+
+# Numbering Windwows and Panes
+set -g base-index 1		# Pane index starts at 1
+setw -g pane-base-index 1	# Set base pane index to 1
+
+# Window Swapping
+bind -r "<" swap-window -d -t -1
+bind -r ">" swap-window -d -t +1
+
+# Keep Current Path
+bind c new-window -c "#{pane_current_path}"
+
+# Toggling Windows and Sessions
+bind Space last-window
+
+# Resizing
+bind -r C-j resize-pane -D 3
+bind -r C-k resize-pane -U 3
+bind -r C-h resize-pane -L 3
+bind -r C-l resize-pane -R 3
+
+# Joining Panes
+bind j choose-window 'join-pane -h -s "%%"'
+bind J choose-window 'join-pane -s "%%"'
+
+# Quick Pane Creation
+bind-key h split-window -h "ted ~/Notes/notes.md"
+
+# Copying and Pasting
+bind C-c run "tmux save-buffer - | xclip -i -sel clip"
+bind C-v run "tmux set-buffer $(xclip -o -sel clip); tmux paste-buffer"
+
+# Global options
+set-option -g default-shell /usr/bin/bash
+set-option -g set-titles on
+set-option -g default-terminal "screen-256color"
+
+# Plugin Manager
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'fabioluciano/tmux-tokyo-night'
+run-shell "/home/jppadmin/.tmux/tmux-power/tmux-power.tmux"
+set -g @plugin "wfxr/tmux-power"
+set -g @tmux_power_theme 'snow'
+set -g @plugin 'wfxr/tmux-net-speed'
+set -g @tmux_power_show_upload_speed true
+set -g @tmux_power_show_download_speed true
+set -g @tmux_power_date_format '%F'
+set -g @tmux_power_time_format '%T'
+set -g @plugin 'maxrodrigo/tmux-nordvpn'
+set -g @nordvpn_connected_text "󱛀" # text to display when connected
+set -g @nordvpn_disconnected_text "󱚱"
+
+run '~/.tmux/plugins/tpm/tpm'
